@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>
+</head><body>
+<title>Questions pour Alice</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+<style>
+/* A letter from Israël to Alice: one question per screen, concrete answers to tap, an optional sentence of example.
+   Same shell as Israël's own self-test, so both results compare item by item. */
+:root {
+  --bg: #F2F3EF; --surface: #FFFFFF; --fg: #17201D; --fg-2: #4B5752; --fg-3: #87918C; --line: #DCE0DA;
+  --accent: #23577A; --accent-soft: #E3ECF2; --ok: #2F6B4A;
+  --ui: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --head: "Source Serif 4", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #121614; --surface: #1B211E; --fg: #ECEFEA; --fg-2: #B5BEB8; --fg-3: #7D8781; --line: #2D3531; --accent: #7FB2D6; --accent-soft: #1E2C35; --ok: #7CC39A; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #121614; --surface: #1B211E; --fg: #ECEFEA; --fg-2: #B5BEB8; --fg-3: #7D8781; --line: #2D3531; --accent: #7FB2D6; --accent-soft: #1E2C35; --ok: #7CC39A; color-scheme: dark }
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--ui); margin: 0; }
+.wrap { max-width: 560px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; padding-block: 24px 32px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2 { font-family: var(--head); font-weight: 700; text-wrap: balance; margin: 0; }
+h1 { font-size: 34px; line-height: 1.15; }
+h2 { font-size: 24px; line-height: 1.3; }
+p { font-size: 17px; line-height: 1.6; color: var(--fg-2); margin: 0; }
+.stack { display: flex; flex-direction: column; gap: 16px; }
+button { font: inherit; cursor: pointer; }
+.primary { min-height: 56px; border: 0; border-radius: 28px; background: var(--accent); color: var(--surface); font-weight: 600; font-size: 18px; padding: 0 24px; }
+.primary:disabled { opacity: .4; cursor: default; }
+.ghost { min-height: 48px; border: 1px solid var(--line); border-radius: 24px; background: transparent; color: var(--fg); font-weight: 500; font-size: 16px; padding: 0 20px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.primary:focus-visible, .ghost:focus-visible, .ans:focus-visible, textarea:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.parts { display: grid; gap: 10px; }
+.part { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.part b { display: block; font-size: 17px; }
+.part span { font-size: 15px; color: var(--fg-2); }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 15px; color: var(--fg-2); }
+.top button { border: 0; background: none; color: var(--accent); font-weight: 600; font-size: 16px; padding: 8px 0; }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-top: 10px; }
+.bar i { display: block; height: 100%; background: var(--accent); transition: width .25s; }
+.q { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 22px; padding-block: 24px; }
+.q .lead { font-size: 15px; color: var(--fg-3); letter-spacing: .02em; }
+.q h2 { font-family: var(--ui); font-weight: 600; font-size: 24px; line-height: 1.35; }
+.answers { display: grid; gap: 10px; }
+.ans { min-height: 56px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--fg); font-size: 17px; line-height: 1.35; text-align: left; padding: 12px 18px; display: flex; align-items: center; gap: 12px; }
+.ans em { font-style: normal; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: 14px; color: var(--fg-2); flex: none; font-variant-numeric: tabular-nums; }
+.ans.on { border-color: var(--accent); background: var(--accent-soft); }
+.ans.on em { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+label.lbl { font-size: 15px; color: var(--fg-2); }
+textarea { width: 100%; min-height: 84px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--fg); font: inherit; font-size: 17px; line-height: 1.5; padding: 12px 14px; resize: vertical; }
+.note { font-size: 14px; color: var(--fg-3); line-height: 1.55; }
+.done { color: var(--ok); font-weight: 600; font-size: 17px; }
+pre { white-space: pre-wrap; word-break: break-word; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font-size: 13px; color: var(--fg-2); margin: 0; max-height: 220px; overflow: auto; }
+.row2 { display: grid; gap: 10px; }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script>
+// Part 1: the 12 questions of the interview script + question 13 (how the search got closed). Several answers allowed.
+const IV = [
+ {s:"Raconte un moment où tu m'as vu au sommet, quand c'était clair que j'étais à ma place. Qu'est-ce que je faisais ?", o:[
+   "Tu construisais quelque chose de nouveau à partir de rien","Tu créais de tes mains : un bijou, un dessin, une forme","Tu convainquais quelqu'un : un client, un partenaire","Tu travaillais dans un cadre clair que quelqu'un d'autre tenait","Tu réglais un problème que personne d'autre ne voyait","Tu aidais quelqu'un directement"]},
+ {s:"Le bureau qu'on a construit ensemble a réussi. Qu'est-ce qui a fait la différence ? Qu'est-ce que toi tu faisais que je n'aurais pas fait seul ?", o:[
+   "Je fixais les priorités","Je disais non aux nouvelles idées","Je tranchais quand tu hésitais","Je t'obligeais à finir avant de commencer autre chose","Je gérais le quotidien et les clients","On avait des horaires et un rythme fixes"]},
+ {s:"Pense à un projet à moi que tu as vu aller jusqu'au bout, et à un autre que tu as vu disparaître. Qu'est-ce qui était différent pour celui qui a abouti ?", o:[
+   "Il y avait une date limite venant de l'extérieur","Un client ou quelqu'un attendait le résultat","Le projet était petit et clair","Quelqu'un d'autre suivait l'avancement","Aucune nouvelle idée n'est venue entre-temps","L'argent arrivait vite"]},
+ {s:"Quand je m'enthousiasme pour une nouvelle idée, qu'arrive-t-il aux choses déjà ouvertes ?", o:[
+   "Elles continuent normalement","Elles ralentissent","Elles s'arrêtent sans être vraiment fermées","Tu essaies de tout faire en même temps","Tu y reviens plus tard, des mois après","Tu les oublies"]},
+ {s:"À quoi ressemble chez moi « ce n'est pas encore assez bon » ?", o:[
+   "Le résultat devient vraiment meilleur","La livraison est retardée","Tu recommences plusieurs fois la même chose","Ça fatigue ou décourage les autres","Tu n'es pas satisfait même quand c'est fini","Ça t'empêche de commencer"]},
+ {s:"Quand m'as-tu vu décider vite et bien ? Et quand bloqué, hésitant, ou revenant sur la même chose ?", o:[
+   "Rapide quand on te montre 2 ou 3 options concrètes","Rapide quand il y a une urgence","Bloqué quand les possibilités sont ouvertes, sans fin","Bloqué sur les choix de goût : couleurs, mots, formes","Tu reviens sur une décision déjà prise","Tu demandes beaucoup d'avis avant de décider"]},
+ {s:"Quels sont les premiers signes que je suis fatigué ou sous pression, avant même que je le remarque ?", o:[
+   "Tu parles plus vite, tu enchaînes","Tu lances de nouveaux projets","Tu deviens silencieux, fermé","Tu t'énerves pour des petites choses","Tu travailles tard le soir","Tu répètes la même inquiétude"]},
+ {s:"Comment je réagis quand quelqu'un me dit « non » ou « ça ne marchera pas » ?", o:[
+   "Tu écoutes et tu changes","Tu argumentes longtemps","Tu cherches un autre moyen de le faire quand même","Tu demandes des preuves","Tu deviens froid ou tu te fermes","Ça dépend de qui le dit"]},
+ {s:"Comment je suis pendant Chabbat, côté travail ? Qu'est-ce qui reste avec moi et qu'est-ce qui s'arrête vraiment ?", o:[
+   "Tu décroches vraiment","Tu y penses mais tu n'en parles pas","Tu en parles quand même","Tu es plus calme après Chabbat","Tu reviens avec de nouvelles idées samedi soir","Tu es impatient que Chabbat se termine"]},
+ {s:"Quel conseil de toi ai-je suivi, et ça a bien marché ? Et lequel n'ai-je pas suivi, et c'est dommage ? Coche le sujet, et écris en une phrase.", o:[
+   "Se concentrer sur une seule chose","Ne pas lancer un nouveau projet","Demander ou payer de l'aide","Se reposer, dormir","Faire confiance à quelqu'un","Le prix ou l'argent"]},
+ {s:"Si tu pouvais décider à ma place d'une seule chose dans ma façon de travailler, ce serait quoi ?", o:[
+   "Deux projets à la fois, pas plus","Une heure de fin fixe chaque jour","Que moi je décide ce qui entre dans la liste","Une date de fin pour chaque projet","Moins de vérifications, plus de livraisons","Une personne qui fait le suivi avec toi chaque semaine"]},
+ {s:"Qu'est-ce que tu vois de bien en moi que, selon toi, je ne vois pas moi-même ?", o:[
+   "Ta capacité à convaincre","Ton goût, ton œil","Ta persévérance","Ta générosité","Tu apprends très vite","Ton calme dans les crises"]},
+ {s:"Quand j'étais bloqué entre beaucoup de possibilités, qu'est-ce que tu faisais pour que je ferme ? Qu'est-ce qui marchait, et qu'est-ce qui ne marchait pas ?", o:[
+   "Je choisissais à ta place","Je réduisais à 2 options","Je fixais une date","Je disais « c'est assez bon »","Je te rappelais le but","Rien ne marchait vraiment"]}];
+const IDK = "Je ne sais pas";
+// Part 2: the same 56 items Israël answered about himself (IPIP-50 + Nenkov 2008 short form), in the third person.
+const BF = [
+ ["E",1,"C'est l'âme de la fête."],["A",-1,"Il se soucie peu des autres."],["C",1,"Il est toujours préparé."],["N",-1,"Il est facilement stressé."],["O",1,"Il a un vocabulaire riche."],
+ ["E",-1,"Il ne parle pas beaucoup."],["A",1,"Il s'intéresse aux gens."],["C",-1,"Il laisse traîner ses affaires."],["N",1,"Il est détendu la plupart du temps."],["O",-1,"Il a du mal à comprendre les idées abstraites."],
+ ["E",1,"Il se sent à l'aise avec les gens."],["A",-1,"Il lui arrive de vexer les autres."],["C",1,"Il fait attention aux détails."],["N",-1,"Il s'inquiète de beaucoup de choses."],["O",1,"Il a une imagination débordante."],
+ ["E",-1,"Il reste en retrait."],["A",1,"Il partage les sentiments des autres."],["C",-1,"Il met le désordre dans les choses."],["N",1,"Il se sent rarement déprimé."],["O",-1,"Les idées abstraites ne l'intéressent pas."],
+ ["E",1,"C'est lui qui lance les conversations."],["A",-1,"Les problèmes des autres ne l'intéressent pas."],["C",1,"Il fait tout de suite les tâches pénibles."],["N",-1,"Il est facilement perturbé."],["O",1,"Il a d'excellentes idées."],
+ ["E",-1,"Il a peu de choses à dire."],["A",1,"Il a le cœur tendre."],["C",-1,"Il oublie souvent de remettre les choses à leur place."],["N",-1,"Il s'énerve facilement."],["O",-1,"Il n'a pas beaucoup d'imagination."],
+ ["E",1,"Dans une fête, il parle à beaucoup de gens différents."],["A",-1,"Les autres ne l'intéressent pas vraiment."],["C",1,"Il aime l'ordre."],["N",-1,"Il change souvent d'humeur."],["O",1,"Il comprend vite."],
+ ["E",-1,"Il n'aime pas attirer l'attention."],["A",1,"Il prend du temps pour les autres."],["C",-1,"Il se dérobe à ses obligations."],["N",-1,"Il a de fréquentes sautes d'humeur."],["O",1,"Il emploie des mots difficiles."],
+ ["E",1,"Être au centre de l'attention ne le gêne pas."],["A",1,"Il ressent les émotions des autres."],["C",1,"Il suit un planning."],["N",-1,"Il s'irrite facilement."],["O",1,"Il passe du temps à réfléchir aux choses."],
+ ["E",-1,"Il est discret avec les inconnus."],["A",1,"Il met les gens à l'aise."],["C",1,"Il est exigeant dans son travail."],["N",-1,"Il se sent souvent déprimé."],["O",1,"Il déborde d'idées."]];
+const MX = [
+ ["S","Quand il écoute de la musique ou un podcast, il change souvent pour voir s'il y a mieux, même quand ce qu'il écoute lui plaît."],
+ ["S","Même quand il est satisfait de son travail, il continue à chercher de meilleures opportunités."],
+ ["D","Il a souvent du mal à choisir un cadeau pour un ami."],
+ ["D","Choisir un film est vraiment difficile pour lui : il hésite toujours pour trouver le meilleur."],
+ ["H","Quoi qu'il fasse, il se fixe les exigences les plus élevées."],
+ ["H","Il ne se contente jamais de moins que le meilleur."]];
+const A5 = ["Pas du tout lui","Plutôt pas lui","Entre les deux","Plutôt lui","Tout à fait lui"];
+const A7 = ["Pas du tout d'accord","Pas d'accord","Plutôt pas d'accord","Entre les deux","Plutôt d'accord","D'accord","Tout à fait d'accord"];
+const L = "abcdefg";
+
+let st = { v: "intro", i: 0, iv: {}, t: {} };
+try { const s = JSON.parse(localStorage.getItem("alice-v1") || "null"); if (s && s.iv) st = s; } catch (e) {}
+const save = () => { try { localStorage.setItem("alice-v1", JSON.stringify(st)); } catch (e) {} };
+const app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const T = [...BF.map((x, n) => ({k: "b" + (n + 1), s: x[2], A: A5})), ...MX.map((x, n) => ({k: "m" + (n + 1), s: x[1], A: A7}))];
+
+function intro() {
+  const started = Object.keys(st.iv).length || Object.keys(st.t).length;
+  app.innerHTML = `<div class="stack" style="flex:1;justify-content:center">
+    <h1>Alice, j'ai besoin de ton regard</h1>
+    <p>J'essaie de mieux comprendre comment je travaille. Tout ce que j'ai pour l'instant vient de moi. Toi, tu me vois de près. Il n'y a pas de bonne réponse, « je ne sais pas » est une très bonne réponse, et je promets seulement d'écouter.</p>
+    <div class="parts">
+      <div class="part"><b>Partie 1 · 13 questions · 8 minutes</b><span>Tu touches une ou plusieurs réponses. Si tu veux, une phrase d'exemple.</span></div>
+      <div class="part"><b>Partie 2 · 56 phrases courtes · 7 minutes · facultative</b><span>Le même questionnaire que j'ai rempli sur moi-même, mais vu par toi.</span></div>
+    </div>
+    <button class="primary" id="go">${started ? "Continuer où je me suis arrêtée" : "Commencer"}</button>
+    ${started ? '<button class="ghost" id="reset">Tout recommencer</button>' : ""}
+    <p class="note">Tes réponses restent sur ce téléphone jusqu'à ce que tu les envoies. Tu peux t'arrêter et revenir plus tard.</p></div>`;
+  document.getElementById("go").onclick = () => {
+    const i = IV.findIndex((q, n) => !st.iv[n]);
+    if (i >= 0) { st.v = "iv"; st.i = i; } else { const j = T.findIndex(q => !(q.k in st.t)); st.v = j >= 0 && Object.keys(st.t).length ? "t" : "mid"; st.i = Math.max(0, j); }
+    save(); render();
+  };
+  const r = document.getElementById("reset"); if (r) r.onclick = () => { st = { v: "iv", i: 0, iv: {}, t: {} }; save(); render(); };
+}
+
+function head(n, total, back) {
+  return `<div class="top"><button id="back">‹ Retour</button><span>${n} sur ${total}</span></div><div class="bar"><i style="width:${(n - 1) / total * 100}%"></i></div>`;
+}
+
+function ivq() {
+  const q = IV[st.i], a = st.iv[st.i] || { o: [], x: "" };
+  const opts = [...q.o, IDK];
+  app.innerHTML = head(st.i + 1, IV.length) + `
+    <div class="q"><div class="lead">Partie 1 · plusieurs réponses possibles</div><h2>${esc(q.s)}</h2>
+    <div class="answers">${opts.map((t, n) => `<button class="ans ${a.o.includes(n) ? "on" : ""}" data-n="${n}"><em>${n < q.o.length ? L[n] : "?"}</em>${esc(t)}</button>`).join("")}</div>
+    <label class="lbl" for="ex">Un exemple, en une phrase (facultatif)</label>
+    <textarea id="ex" placeholder="Par exemple : la fois où…">${esc(a.x)}</textarea>
+    <button class="primary" id="next" ${a.o.length || a.x.trim() ? "" : "disabled"}>${st.i + 1 < IV.length ? "Suivant" : "Terminer la partie 1"}</button></div>`;
+  const keep = () => { st.iv[st.i] = a; save(); document.getElementById("next").disabled = !(a.o.length || a.x.trim()); };
+  app.querySelectorAll(".ans").forEach(b => b.onclick = () => {
+    const n = +b.dataset.n, idk = q.o.length;
+    if (n === idk) a.o = a.o.includes(idk) ? [] : [idk];
+    else { a.o = a.o.filter(v => v !== idk); a.o = a.o.includes(n) ? a.o.filter(v => v !== n) : [...a.o, n].sort(); }
+    app.querySelectorAll(".ans").forEach(x => x.classList.toggle("on", a.o.includes(+x.dataset.n)));
+    keep();
+  });
+  document.getElementById("ex").oninput = e => { a.x = e.target.value; keep(); };
+  document.getElementById("back").onclick = () => { if (st.i) st.i--; else st.v = "intro"; save(); render(); };
+  document.getElementById("next").onclick = () => { st.i++; if (st.i >= IV.length) { st.v = "mid"; st.i = 0; } save(); render(); };
+}
+
+function mid() {
+  app.innerHTML = `<div class="stack" style="flex:1;justify-content:center">
+    <h1>Merci. La partie 1 est finie.</h1>
+    <p>La partie 2, c'est 56 phrases courtes sur moi : tu dis seulement si chaque phrase me ressemble. Ça prend environ 7 minutes, et ça me permet de comparer avec mes propres réponses.</p>
+    <p class="note">Deux réponses semblent vraies ? Choisis ce qui est vrai la plupart du temps, ces dernières années. « Entre les deux » compte comme le milieu exact.</p>
+    <button class="primary" id="t">Faire la partie 2</button>
+    <button class="ghost" id="skip">Envoyer maintenant, sans la partie 2</button></div>`;
+  document.getElementById("t").onclick = () => { st.v = "t"; st.i = Math.max(0, T.findIndex(q => !(q.k in st.t))); save(); render(); };
+  document.getElementById("skip").onclick = () => { st.v = "send"; save(); render(); };
+}
+
+function tq() {
+  const q = T[st.i], isB = q.k[0] === "b";
+  app.innerHTML = head(st.i + 1, T.length) + `
+    <div class="q"><div class="lead">Partie 2 · ${isB ? "Cette phrase lui ressemble ?" : "Tu es d'accord ?"}</div><h2>${esc(q.s)}</h2>
+    <div class="answers">${q.A.map((t, n) => `<button class="ans ${st.t[q.k] === n + 1 ? "on" : ""}" data-v="${n + 1}"><em>${n + 1}</em>${esc(t)}</button>`).join("")}</div></div>`;
+  document.getElementById("back").onclick = () => { if (st.i) st.i--; else st.v = "mid"; save(); render(); };
+  app.querySelectorAll(".ans").forEach(b => b.onclick = () => {
+    st.t[q.k] = +b.dataset.v; b.classList.add("on");
+    setTimeout(() => { st.i++; if (st.i >= T.length) st.v = "send"; save(); render(); }, 180);
+  });
+}
+
+function scores() {
+  const bf = {}, mx = {};
+  BF.forEach((x, n) => { const v = st.t["b" + (n + 1)]; if (v != null) bf[x[0]] = (bf[x[0]] || 0) + (x[1] > 0 ? v : 6 - v); });
+  MX.forEach((x, n) => { const v = st.t["m" + (n + 1)]; if (v != null) (mx[x[0]] = mx[x[0]] || []).push(v); });
+  for (const k in mx) mx[k] = +(mx[k].reduce((a, b) => a + b) / mx[k].length).toFixed(1);
+  return { bf, mx };
+}
+
+// Compact message: option letters per question + her sentence, then the 56 answers as digits ("-" = skipped).
+function message() {
+  const lines = ["Réponses d'Alice pour Israël (" + new Date().toLocaleDateString("fr-FR") + ")", ""];
+  IV.forEach((q, n) => {
+    const a = st.iv[n]; if (!a) { lines.push((n + 1) + ". —"); return; }
+    const picks = a.o.map(v => v < q.o.length ? L[v] : "?").join(",");
+    lines.push((n + 1) + ". " + (picks || "—") + (a.x.trim() ? " | " + a.x.trim().replace(/\s+/g, " ") : ""));
+  });
+  if (Object.keys(st.t).length) {
+    lines.push("", "Partie 2 :", "B " + BF.map((x, n) => st.t["b" + (n + 1)] || "-").join(""), "M " + MX.map((x, n) => st.t["m" + (n + 1)] || "-").join(""));
+  }
+  return lines.join("\n");
+}
+
+async function send() {
+  const txt = message();
+  app.innerHTML = `<div class="stack">
+    <h1>Envoyer à Israël</h1>
+    <p id="status" class="note">Enregistrement…</p>
+    <a class="primary" style="display:flex;align-items:center;justify-content:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}">Envoyer sur WhatsApp</a>
+    <button class="ghost" id="copy">Copier mes réponses</button>
+    <p class="note">WhatsApp s'ouvre avec tes réponses déjà écrites. Choisis Israël et envoie.</p>
+    <pre id="out">${esc(txt)}</pre>
+    <button class="ghost" id="edit">Revenir à mes réponses</button></div>`;
+  document.getElementById("copy").onclick = async e => {
+    try { await navigator.clipboard.writeText(txt); e.target.textContent = "Copié"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents(document.getElementById("out")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); e.target.textContent = "Sélectionné : copie à la main"; }
+  };
+  document.getElementById("edit").onclick = () => { st.v = "iv"; st.i = 0; save(); render(); };
+  const status = document.getElementById("status");
+  try {
+    const [db, user] = await Promise.all([claude.use("db"), claude.use("user")]);
+    if (!db || !user || (await user.can("data.write")) === false) { status.textContent = "Pour qu'Israël reçoive tes réponses, envoie-les sur WhatsApp."; return; }
+    await db.doc("responses/" + (await user.id())).set({ iv: st.iv, t: st.t, scores: scores(), text: txt, at: new Date().toISOString() });
+    status.className = "done"; status.textContent = "Reçu. Israël a tes réponses. Merci.";
+  } catch (e) { status.textContent = "Pour qu'Israël reçoive tes réponses, envoie-les sur WhatsApp."; }
+}
+
+function render() {
+  ({ intro, iv: ivq, mid, t: tq, send })[st.v]();
+  scrollTo(0, 0);
+}
+render();
+</script>
+
+</body></html>
